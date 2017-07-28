@@ -20,3 +20,13 @@ Route::post('comments/{comment}/accept',[
     'uses' => 'CommentController@accept',
     'as' => 'comments.accept'
 ]);
+
+Route::post('posts/{post}/subscribe',[
+    'uses' => 'SubscriptionController@subscribe',
+    'as' => 'post.subscribe'
+]);
+
+Route::delete('posts/{post}/subscribe',[
+    'uses' => 'SubscriptionController@unsubscribe',
+    'as' => 'post.unsubscribe'
+]);
