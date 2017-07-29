@@ -1,14 +1,15 @@
 <?php
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+
+use Illuminate\Support\Facades\Notification;
 
 class WriteCommentTest extends FeatureTestCase
 {
 
     public function test_a_user_can_write_a_comment()
     {
+        Notification::fake();
+
         $post = $this->createPost();
         $user = $this->defaultUser();
 
