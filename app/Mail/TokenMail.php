@@ -23,7 +23,6 @@ class TokenMail extends Mailable
      */
     public function __construct(Token $token)
     {
-        //
         $this->token = $token;
     }
 

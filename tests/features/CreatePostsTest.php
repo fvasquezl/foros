@@ -36,6 +36,7 @@ class CreatePostsTests extends FeatureTestCase
         $this->seePageIs($post->url);
     }
 
+    //check
     function test_creating_a_post_requires_authentication()
     {
         //When
