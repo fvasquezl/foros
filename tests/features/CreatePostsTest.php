@@ -11,10 +11,12 @@ class CreatePostsTests extends FeatureTestCase
         $content = 'Este es el contenido';
 
         $this->actingAs($user = $this->defaultUser());
+        $category =factory(\App\Category::class)->create();
         //When
         $this->visit(route('posts.create'))
             ->type($title, 'title')
             ->type($content, 'content')
+            ->select($category->id,'category_id')
             ->press('Publicar');
         //Then
         $this->seeInDatabase('posts',[
@@ -22,6 +24,8 @@ class CreatePostsTests extends FeatureTestCase
             'content' => $content,
             'pending' => true,
             'user_id' => $user->id,
+            'slug'=>'esta-es-una-pregunta',
+            'category_id' => $category->id,
         ]);
 
         $post = Post::first();
