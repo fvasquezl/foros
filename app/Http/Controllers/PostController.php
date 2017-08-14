@@ -10,10 +10,17 @@ class PostController extends Controller
 {
     public function index(Category $category= null, Request $request)
     {
+        $routeName = $request->route()->getName();
+        list($orderColumn,$orderDirection)= $this->getListOrder($request->get('orden'));
+
         $posts = Post::orderBy('created_at','DESC')
-            ->scopes($this->getListScopes($category,$request))
+            ->scopes($this->getListScopes($category,$routeName))
+            ->orderBy($orderColumn,$orderDirection)
             ->paginate();
+        $posts->appends(request()->intersect('orden'));
+
         $categoryItems = $this->getCategoryItems();
+
         return view('posts.index',compact('posts','category','categoryItems'));
     }
 
@@ -35,23 +42,30 @@ class PostController extends Controller
         })->toArray();
     }
 
-    public function getListScopes(Category $category,Request $request)
+    public function getListScopes(Category $category,$routeName)
     {
         $scopes =[];
-
         if($category->exists){
             $scopes['category'] = [$category];
         }
-
-        $routeName = $request->route()->getName();
-
         if($routeName == 'posts.pending'){
             $scopes[]='pending';
         }
-
         if($routeName == 'posts.completed'){
             $scopes[]='completed';
         }
         return $scopes;
+    }
+
+    protected function getListOrder($order)
+    {
+        if($order=='recientes'){
+            return ['created_at','desc'];
+        }
+        if ($order=='antiguos'){
+            return ['created_at','asc'];
+        }
+
+        return ['created_at','desc'];
     }
 }

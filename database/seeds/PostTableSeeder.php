@@ -15,7 +15,8 @@ class PostTableSeeder extends Seeder
         $categories = Category::select('id')->get();
         foreach (range(1,100) as $i) {
             factory(\App\Post::class)->create([
-                'category_id' => $categories->random()->id
+                'category_id' => $categories->random()->id,
+                'created_at' => \Carbon\Carbon::now()->subHour(rand(0,700)),
             ]);
         }
 
