@@ -16,6 +16,7 @@ class CreatePostTest extends DuskTestCase
 
     function test_a_user_create_a_post()
     {
+
         //Having
         $user = $this->defaultUser();
         $category = factory(Category::class)->create();
@@ -39,6 +40,7 @@ class CreatePostTest extends DuskTestCase
         ]);
 
         $post = Post::first();
+
 
         //test the author is subscribed automatically to the post.
         $this->assertDatabaseHas('subscriptions',[
