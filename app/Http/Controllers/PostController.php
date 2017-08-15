@@ -11,6 +11,7 @@ class PostController extends Controller
     public function index(Category $category= null, Request $request)
     {
         $routeName = $request->route()->getName();
+
         list($orderColumn,$orderDirection)= $this->getListOrder($request->get('orden'));
 
         $posts = Post::query()->orderBy('created_at','DESC')
@@ -41,7 +42,7 @@ class PostController extends Controller
             ->map(function($category) use ($routeName){
             return [
                 'title' => $category->name,
-                'full_url' => route('posts.index',$category)
+                'full_url' => route($routeName,$category)
             ];
         })->toArray();
     }
