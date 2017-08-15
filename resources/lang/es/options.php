@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'post-order'=>[
+    'posts-order'=>[
         'recientes' => 'Posts recientes',
         'antiguos'  => 'Posts antiguos',
     ]

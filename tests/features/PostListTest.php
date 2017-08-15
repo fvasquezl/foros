@@ -45,7 +45,7 @@ class PostListTest extends FeatureTestCase
             ->within('.categories',function(){
                 $this->click('Laravel');
             })
-            ->seeInElement('h1','Post de Laravel')
+            ->seeInElement('h1','Posts de Laravel')
             ->see($laravelPost->title)
             ->dontSee($vuePost->title);
     }

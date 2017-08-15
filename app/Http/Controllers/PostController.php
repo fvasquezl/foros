@@ -13,13 +13,14 @@ class PostController extends Controller
         $routeName = $request->route()->getName();
         list($orderColumn,$orderDirection)= $this->getListOrder($request->get('orden'));
 
-        $posts = Post::orderBy('created_at','DESC')
+        $posts = Post::query()->orderBy('created_at','DESC')
             ->scopes($this->getListScopes($category,$routeName))
             ->orderBy($orderColumn,$orderDirection)
             ->paginate();
+
         $posts->appends(request()->intersect('orden'));
 
-        $categoryItems = $this->getCategoryItems();
+        $categoryItems = $this->getCategoryItems($routeName);
 
         return view('posts.index',compact('posts','category','categoryItems'));
     }
@@ -32,9 +33,12 @@ class PostController extends Controller
         return view('posts.show',compact('post'));
     }
 
-    protected function getCategoryItems()
+    protected function getCategoryItems(string $routeName)
     {
-        return Category::orderBy('name')->get()->map(function($category){
+        return Category::query()
+            ->orderBy('name')
+            ->get()
+            ->map(function($category) use ($routeName){
             return [
                 'title' => $category->name,
                 'full_url' => route('posts.index',$category)
@@ -42,7 +46,7 @@ class PostController extends Controller
         })->toArray();
     }
 
-    public function getListScopes(Category $category,$routeName)
+    public function getListScopes(Category $category, string $routeName)
     {
         $scopes =[];
         if($category->exists){
