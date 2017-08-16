@@ -10,8 +10,8 @@ class CommentTableSeeder extends Seeder
 
     public function run()
     {
-        $users = User::select('id')->get();
-        $posts = Post::select('id')->get();
+        $users = User::query()->select('id')->get();
+        $posts = Post::query()->select('id')->get();
         for ($i=0;$i<250;++$i){
             $comment = factory(Comment::class)->create([
                 'user_id' => $users->random()->id,

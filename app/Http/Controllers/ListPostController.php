@@ -6,18 +6,20 @@ use App\Category;
 use App\Post;
 use Illuminate\Http\Request;
 
-class PostController extends Controller
+class ListPostController extends Controller
 {
-    public function index(Category $category= null, Request $request)
+    public function __invoke(Category $category= null, Request $request)
     {
         $routeName = $request->route()->getName();
 
         list($orderColumn,$orderDirection)= $this->getListOrder($request->get('orden'));
 
-        $posts = Post::query()->orderBy('created_at','DESC')
+
+        $posts = Post::query()
             ->scopes($this->getListScopes($category,$routeName))
             ->orderBy($orderColumn,$orderDirection)
             ->paginate();
+
 
         $posts->appends(request()->intersect('orden'));
 
@@ -26,13 +28,7 @@ class PostController extends Controller
         return view('posts.index',compact('posts','category','categoryItems'));
     }
 
-    public function show(Post $post,$slug){
 
-        if($post->slug != $slug){
-            return redirect($post->url,301);
-        }
-        return view('posts.show',compact('post'));
-    }
 
     protected function getCategoryItems(string $routeName)
     {
@@ -47,7 +43,7 @@ class PostController extends Controller
         })->toArray();
     }
 
-    public function getListScopes(Category $category, string $routeName)
+    protected function getListScopes(Category $category, string $routeName)
     {
         $scopes =[];
         if($category->exists){
