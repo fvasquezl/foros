@@ -14,7 +14,7 @@ class AcceptAnswerTest extends FeatureTestCase
 
         $this->actingAs($comment->post->user);
         $this->visit($comment->post->url)
-            ->press('Aceptar Respuesta');
+            ->press('Aceptar respuesta');
 
         $this->seeInDatabase('posts',[
             'id' => $comment->post_id,
