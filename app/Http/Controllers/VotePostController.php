@@ -15,7 +15,23 @@ class VotePostController extends Controller
         return [
             'new_score' => $post->score,
         ];
+    }
 
+    public function downvote(Post $post)
+    {
+        Vote::downvote($post);
 
+        return [
+            'new_score' => $post->score,
+        ];
+    }
+
+    public function undoVote(Post $post)
+    {
+        Vote::undoVote($post);
+
+        return [
+            'new_score' => $post->score,
+        ];
     }
 }
