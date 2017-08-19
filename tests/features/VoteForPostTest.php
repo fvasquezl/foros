@@ -50,7 +50,7 @@ class VoteForPostTest extends TestCase
         $this->actingAs($user = $this->defaultUser());
         $post = $this->createPost();
 
-        Vote::upvote($post);
+        $post->upvote();
 
         $this->deleteJson($post->url.'/vote')
             ->assertSuccessful()
