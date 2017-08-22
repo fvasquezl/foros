@@ -20,13 +20,7 @@
                 @endif
             </p>
 
-            <div>
-                <form action="">
-                    <button class="btn btn-default">+1</button>
-                    Puntuacion actual: <strong id="current-score">5</strong>
-                    <button class="btn btn-default">-1</button>
-                </form>
-            </div>
+            <app-vote score="{{$post->score}}" vote="{{$post->current_vote}}"></app-vote>
 
             {!! $post->vote_component !!}
 

@@ -10,7 +10,7 @@ class VoteForPostTest extends DuskTestCase
 {
     use DatabaseMigrations;
 
-    public function test_a_user_can_vote_for_a_post()
+    function test_a_user_can_vote_for_a_post()
     {
         $user = $this->defaultUser();
         $post = $this->createPost();
@@ -19,7 +19,14 @@ class VoteForPostTest extends DuskTestCase
             $browser->loginAs($user)
                     ->visit($post->url)
                     ->pressAndWaitFor('+1')
-                    ->assertSeeIn('current-vote',1);
+                    ->assertSeeIn('#current-score',1);
+            $this->assertDatabaseHas('posts',[
+                'id' => $post->id,
+                'score' => 1
+            ]);
+
+            $this->assertSame(1, $post->getVoteFrom($user));
+
         });
     }
 }
