@@ -22,11 +22,7 @@ class APostCanBeVotedTest extends TestCase
     {
         $this->post->upvote();
 
-        $this->assertDatabaseHas('votes',[
-            'post_id' => $this->post->id,
-            'user_id' => $this->user->id,
-            'vote' => 1,
-        ]);
+        $this->assertSame(1, $this->post->current_vote);
 
         $this->assertSame(1, $this->post->score);
     }
@@ -34,12 +30,7 @@ class APostCanBeVotedTest extends TestCase
     function test_a_post_can_be_downvoted()
     {
         $this->post->downvote();
-        $this->assertDatabaseHas('votes',[
-            'post_id' => $this->post->id,
-            'user_id' => $this->user->id,
-            'vote' => -1,
-        ]);
-
+        $this->assertSame(-1, $this->post->current_vote);
         $this->assertSame(-1, $this->post->score);
     }
 
@@ -84,10 +75,9 @@ class APostCanBeVotedTest extends TestCase
 
     function test_the_post_score_is_calculated_correctly()
     {
-        Vote::create([
-            'post_id' => $this->post->id,
+        $this->post->votes()->create([
             'user_id' => $this->anyone()->id,
-            'vote' => 1
+            'vote' => 1,
         ]);
 
         $this->post->upvote();
@@ -97,16 +87,26 @@ class APostCanBeVotedTest extends TestCase
 
     function test_a_post_can_be_unvoted()
     {
+        $this->assertNull($this->post->current_vote);
+
         $this->post->upvote();
+
+        $this->assertSame(1, $this->post->current_vote);
+
         $this->post->undoVote();
 
-        $this->assertDatabaseMissing('votes',[
-            'post_id' => $this->post->id,
-            'user_id' => $this->user->id,
-            'vote' => 1
-        ]);
+        $this->assertNull($this->post->current_vote);
+
         $this->assertSame(0,$this->post->score);
 
     }
 
+    function test_get_vote_from_user_returns_the_vote_from_the_right_post()
+    {
+        $this->post->upvote();
+        $anotherPost= $this->createPost();
+        $this->assertSame(1, $this->post->current_vote);
+        $this->assertNull($anotherPost->current_vote);
+
+    }
 }

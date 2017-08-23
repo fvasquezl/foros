@@ -2,9 +2,14 @@
 
 namespace App;
 
+use Collective\Html\HtmlFacade as Html;
 
 trait CanBeVoted
 {
+    public function votes()
+    {
+        return $this->morphMany(Vote::class,'votable');
+    }
 
     public function getCurrentVoteAttribute()
     {
@@ -13,9 +18,18 @@ trait CanBeVoted
         }
     }
 
+    public function getVoteComponentAttribute()
+    {
+       return Html::tag('app-vote','',[
+           'post_id' => $this->id,
+           'score' => $this->score,
+           'vote' => $this->current_vote
+       ]);
+    }
+
     public function getVoteFrom(User $user)
     {
-        return Vote::query()
+        return $this->votes()
             ->where('user_id',$user->id)
             ->value('vote');
     }
@@ -32,8 +46,8 @@ trait CanBeVoted
 
     protected function addVote($amount)
     {
-        Vote::query()->UpdateOrCreate(
-            ['post_id'=>$this->id, 'user_id' => auth()->id()],
+        $this->votes()->UpdateOrCreate(
+            ['user_id' => auth()->id()],
             ['vote' => $amount]
         );
 
@@ -42,10 +56,10 @@ trait CanBeVoted
 
     public function undoVote()
     {
-        Vote::query()->where([
-            'post_id'=> $this->id,
-            'user_id'=>auth()->id()
-        ])->delete();
+        $this->votes()
+            ->where('user_id',auth()
+            ->id())
+            ->delete();
 
         $this->refreshPostScore();
     }
@@ -55,9 +69,8 @@ trait CanBeVoted
      */
     protected function refreshPostScore()
     {
-        $this->score = Vote::query()
-            ->where(['post_id' => $this->id])
-            ->sum('vote');
+        $this->score = $this->votes()
+                        ->sum('vote');
         $this->save();
     }
 }
